@@ -47,7 +47,7 @@ class _RegistrationState extends State<Registration> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Create an account",
+                    "Create an Account",
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
