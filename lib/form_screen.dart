@@ -11,7 +11,7 @@ class FormSreen extends StatefulWidget {
 }
 
 class _FormSreenState extends State<FormSreen> {
-  List<Student> studentList = List.empty(growable: true);
+  List<Student>? studentList = List.empty(growable: true);
   final _formKey = GlobalKey<FormState>();
   final namecontroller = TextEditingController();
   final addressController = TextEditingController();
@@ -32,6 +32,18 @@ class _FormSreenState extends State<FormSreen> {
     'Mobile App Development(Flutter)',
     'Blockchain and Cryptocurrency',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+      _loadStudentList();
+  }
+  Future<void> _loadStudentList() async {
+    List<Student>? savedStudentList = await getStudentList();
+    setState(() {
+      studentList = savedStudentList;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -269,9 +281,9 @@ class _FormSreenState extends State<FormSreen> {
                 Navigator.of(context).pop();
                 if (_formKey.currentState!.validate()) {
                   setState(() {
-                    studentList
+                    studentList!
                         .add(Student(namecontroller.text, selectedCourse!));
-                    saveStudentList(studentList);
+                    saveStudentList(studentList!);
                   });
                   _showSnackBar(context, "Registration Successful.");
                   namecontroller.clear();
