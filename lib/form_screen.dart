@@ -23,7 +23,7 @@ class _FormSreenState extends State<FormSreen> {
   String? selectedCourse;
 
   final List<String> courses = [
-    'Select a course', 
+    'Select a course',
     'Machine Learning and Artificial Intelligence',
     'Data Science and Analytics',
     'Cybersecurity Fundamentals',
@@ -85,7 +85,9 @@ class _FormSreenState extends State<FormSreen> {
                     });
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty || value == 'Select a course') {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value == 'Select a course') {
                       return 'Please select a course';
                     }
                     return null;
@@ -112,6 +114,8 @@ class _FormSreenState extends State<FormSreen> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
+                  maxLines: 4,
+                  keyboardType: TextInputType.multiline,
                   controller: addressController,
                   decoration: const InputDecoration(
                     label: Text("Address"),
@@ -182,7 +186,8 @@ class _FormSreenState extends State<FormSreen> {
                       if (_formKey.currentState!.validate()) {
                         _showRegisterDialog();
                       } else {
-                        _showSnackBar(context, "Please Enter Mandatory Fields.");
+                        _showSnackBar(
+                            context, "Please Enter Mandatory Fields.");
                       }
                     },
                     child: const Text(
@@ -197,15 +202,30 @@ class _FormSreenState extends State<FormSreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const RegisteredStudentScreen()));
-                  },
-                  child: const Text("Show Registered Students"),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[900],
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const RegisteredStudentScreen()));
+                    },
+                    child: const Text(
+                      "Show Registered Students",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -249,7 +269,8 @@ class _FormSreenState extends State<FormSreen> {
                 Navigator.of(context).pop();
                 if (_formKey.currentState!.validate()) {
                   setState(() {
-                    studentList.add(Student(namecontroller.text, selectedCourse!));
+                    studentList
+                        .add(Student(namecontroller.text, selectedCourse!));
                     saveStudentList(studentList);
                   });
                   _showSnackBar(context, "Registration Successful.");
