@@ -1,5 +1,6 @@
-import 'package:project/login.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'login.dart';
 
 class Registration extends StatefulWidget {
   const Registration({super.key});
@@ -9,13 +10,37 @@ class Registration extends StatefulWidget {
 }
 
 class _RegistrationState extends State<Registration> {
-  bool isSelectedPass = true;
-  bool isSelectedConfPass = true;
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool isSelected = true;
+
+  Future<void> _signup() async {
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+    final confirmPassword = _confirmPasswordController.text;
+
+    if (password == confirmPassword) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username', username);
+      await prefs.setString('password', password);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Passwords do not match!')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-         decoration: const BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color.fromARGB(255, 19, 144, 255),
@@ -28,109 +53,110 @@ class _RegistrationState extends State<Registration> {
           ),
         ),
         child: Center(
-          child: Container(
-            width: 450,
-            height: 400,
-            decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(24),topRight: Radius.circular(24)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black54,
-                      offset: Offset(4.0, 4.0),
-                      blurRadius: 14.0,
-                      spreadRadius: 1,
-                    ),
-                  ]),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Create an Account",
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(14),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Username",
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+              width: 450,
+              height: 400,
+              decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(24),topRight: Radius.circular(24)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black54,
+                        offset: Offset(4.0, 4.0),
+                        blurRadius: 14.0,
+                        spreadRadius: 1,
+                      ),
+                    ]),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Create an Account",
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(14),
-                    child: TextField(
-                      obscureText: isSelectedPass,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            isSelectedPass ? Icons.visibility_off : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              isSelectedPass = !isSelectedPass;
-                            });
-                          },
+                    Padding(
+                      padding: EdgeInsets.all(16),
+                      child: TextField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Username",
                         ),
-                        labelText: "Password",
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(14),
-                    child: TextField(
-                      obscureText: isSelectedConfPass,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            isSelectedConfPass ? Icons.visibility_off : Icons.visibility,
+                    Padding(
+                      padding: EdgeInsets.all(16),
+                      child: TextField(
+                        controller: _passwordController,
+                        obscureText: isSelected,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isSelected ? Icons.visibility_off : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isSelected = !isSelected;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            setState(() {
-                              isSelectedConfPass = !isSelectedConfPass;
-                            });
-                          },
+                          labelText: "Password",
                         ),
-                        labelText: "Confirm Password",
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
+                    Padding(
+                      padding: EdgeInsets.all(16),
+                      child: TextField(
+                        controller: _confirmPasswordController,
+                        obscureText: isSelected,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isSelected ? Icons.visibility_off : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isSelected = !isSelected;
+                              });
+                            },
+                          ),
+                          labelText: "Confirm Password",
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
                     height: 80,
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Login()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
+                      child: Padding(
+                        padding: const EdgeInsets.all(14.0),
+                        child: ElevatedButton(
+                          onPressed: _signup,
+                          style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue[900],
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)
                           )),
-                        child: Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                          child: Text(
+                            "Sign Up",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

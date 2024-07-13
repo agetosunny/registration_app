@@ -1,6 +1,7 @@
-import 'package:project/profile.dart';
-import 'package:project/registration.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'registration.dart';
+import 'profile.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -10,7 +11,29 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool isSelected = true;
+
+  Future<void> _login() async {
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedUsername = prefs.getString('username');
+    String? storedPassword = prefs.getString('password');
+
+    if (username == storedUsername && password == storedPassword) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Profile()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid username or password!')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +41,14 @@ class _LoginState extends State<Login> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 19, 164, 255),
-              Color.fromARGB(255, 65, 206, 241),
-              Color.fromARGB(255, 143, 228, 254),
-            ],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            stops: [0.2,0.5,0.1]
-          ),
+              colors: [
+                Color.fromARGB(255, 19, 164, 255),
+                Color.fromARGB(255, 65, 206, 241),
+                Color.fromARGB(255, 143, 228, 254),
+              ],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              stops: [0.2, 0.5, 0.1]),
         ),
         child: Center(
           child: Padding(
@@ -36,7 +58,9 @@ class _LoginState extends State<Login> {
               height: 400,
               decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(24),topRight: Radius.circular(24)),
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(24),
+                      topRight: Radius.circular(24)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black54,
@@ -59,10 +83,11 @@ class _LoginState extends State<Login> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.all(16),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
                       child: TextField(
-                        decoration: InputDecoration(
+                        controller: _usernameController,
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Username",
                         ),
@@ -71,6 +96,7 @@ class _LoginState extends State<Login> {
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: TextField(
+                        controller: _passwordController,
                         obscureText: isSelected,
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
@@ -94,15 +120,9 @@ class _LoginState extends State<Login> {
                       width: double.infinity,
                       height: 80,
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16.0),
                         child: ElevatedButton(
-                          onPressed: () async {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Profile()),
-                            );
-                          },
+                          onPressed: _login,
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue[900],
                               shape: RoundedRectangleBorder(
