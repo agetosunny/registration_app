@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project/form_model.dart';
-<<<<<<< HEAD
-=======
-import 'package:project/form_screen.dart';
->>>>>>> 4705b38a31fdeb86ef4109a7d2eb2f0b3a48df52
 import 'package:project/functions.dart';
 
 class RegisteredStudentScreen extends StatefulWidget {
@@ -48,16 +44,12 @@ class _RegisteredStudentScreenState extends State<RegisteredStudentScreen> {
     );
   }
    Widget getField(int index){
-<<<<<<< HEAD
-      return Card(
-=======
       return Dismissible(
         key: ValueKey<Student>(studentList![index]),
         background: Container(
           color: Colors.blue[400],
           child: const Icon(Icons.delete),
         ),
->>>>>>> 4705b38a31fdeb86ef4109a7d2eb2f0b3a48df52
         child: ListTile(leading:  const Icon(Icons.person,size: 50,),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,9 +63,6 @@ class _RegisteredStudentScreenState extends State<RegisteredStudentScreen> {
           ],
         ),
         ),
-<<<<<<< HEAD
-      );
-=======
         confirmDismiss: (DismissDirection direction){
           return _alerDisplay(index);
         },
@@ -114,6 +103,5 @@ class _RegisteredStudentScreenState extends State<RegisteredStudentScreen> {
     );
     return del;
     
->>>>>>> 4705b38a31fdeb86ef4109a7d2eb2f0b3a48df52
   }
 }

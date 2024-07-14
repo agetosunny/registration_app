@@ -57,7 +57,6 @@ class _FormSreenState extends State<FormSreen> {
     return EmailValidator.validate(emailController.text);
   }
 
->>>>>>> 4705b38a31fdeb86ef4109a7d2eb2f0b3a48df52
   @override
   Widget build(BuildContext context) {
     return Scaffold(
