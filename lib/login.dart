@@ -162,7 +162,8 @@ class _LoginState extends State<Login> {
                             child: const Text(
                               "Sign Up",
                               style: TextStyle(
-                                fontSize: 24,
+
+                                fontSize: 20,
                                 fontWeight: FontWeight.w500,
                                 color: Colors.blue,
                               ),

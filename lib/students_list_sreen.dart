@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:project/form_model.dart';
+<<<<<<< HEAD
+=======
+import 'package:project/form_screen.dart';
+>>>>>>> 4705b38a31fdeb86ef4109a7d2eb2f0b3a48df52
 import 'package:project/functions.dart';
 
 class RegisteredStudentScreen extends StatefulWidget {
@@ -44,7 +48,16 @@ class _RegisteredStudentScreenState extends State<RegisteredStudentScreen> {
     );
   }
    Widget getField(int index){
+<<<<<<< HEAD
       return Card(
+=======
+      return Dismissible(
+        key: ValueKey<Student>(studentList![index]),
+        background: Container(
+          color: Colors.blue[400],
+          child: const Icon(Icons.delete),
+        ),
+>>>>>>> 4705b38a31fdeb86ef4109a7d2eb2f0b3a48df52
         child: ListTile(leading:  const Icon(Icons.person,size: 50,),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,6 +71,49 @@ class _RegisteredStudentScreenState extends State<RegisteredStudentScreen> {
           ],
         ),
         ),
+<<<<<<< HEAD
       );
+=======
+        confirmDismiss: (DismissDirection direction){
+          return _alerDisplay(index);
+        },
+      );
+  
+  }
+  Future<bool?> _alerDisplay(index) async {
+    bool? del= await
+    showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirmation!"),
+          content: const Text(
+              "Are you sure you want to delete this item?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+                setState(() {
+                  studentList!.removeAt(index);
+                  saveStudentList(studentList!);
+                });
+                showSnackBar(context, "Item Deleted Successfully.");
+                
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
+    return del;
+    
+>>>>>>> 4705b38a31fdeb86ef4109a7d2eb2f0b3a48df52
   }
 }

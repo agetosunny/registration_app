@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:project/form_model.dart';
 import 'package:project/functions.dart';
@@ -23,7 +24,7 @@ class _FormSreenState extends State<FormSreen> {
   String? selectedCourse;
 
   final List<String> courses = [
-    'Select a course',
+    '<Select a course>',
     'Machine Learning and Artificial Intelligence',
     'Data Science and Analytics',
     'Cybersecurity Fundamentals',
@@ -36,15 +37,27 @@ class _FormSreenState extends State<FormSreen> {
   @override
   void initState() {
     super.initState();
-      _loadStudentList();
+
+    _loadStudentList();
   }
+
   Future<void> _loadStudentList() async {
     List<Student>? savedStudentList = await getStudentList();
     setState(() {
-      studentList = savedStudentList;
+      if (savedStudentList != null) {
+        studentList = savedStudentList;
+      }
     });
   }
 
+  bool validEmail() {
+    if (emailController.text.isEmpty) {
+      return true;
+    }
+    return EmailValidator.validate(emailController.text);
+  }
+
+>>>>>>> 4705b38a31fdeb86ef4109a7d2eb2f0b3a48df52
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +75,37 @@ class _FormSreenState extends State<FormSreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(10.0),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    label: labelWithAsterisk("Course"),
+                    border: const OutlineInputBorder(),
+                  ),
+                  value: selectedCourse,
+                  items: courses
+                      .map((course) => DropdownMenuItem<String>(
+                            value:
+                                course == '<Select a course>' ? null : course,
+                            child: Text(course),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCourse = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value == '<Select a course>') {
+                      return 'Please select a course';
+                    }
+                    return null;
+                  },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   controller: namecontroller,
                   decoration: InputDecoration(
@@ -75,53 +119,57 @@ class _FormSreenState extends State<FormSreen> {
                     }
                     return null;
                   },
+
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    label: labelWithAsterisk("Course"),
-                    border: const OutlineInputBorder(),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 0, top: 10, bottom: 10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(4.0),
+                          bottomLeft: Radius.circular(4.0),
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "+91",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
                   ),
-                  value: selectedCourse,
-                  items: courses
-                      .map((course) => DropdownMenuItem<String>(
-                            value: course == 'Select a course' ? null : course,
-                            child: Text(course),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCourse = value;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null ||
-                        value.isEmpty ||
-                        value == 'Select a course') {
-                      return 'Please select a course';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: contactController,
-                  decoration: InputDecoration(
-                    label: labelWithAsterisk("Contact Number"),
-                    hintText: "Contact Number",
-                    border: const OutlineInputBorder(),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextFormField(
+                        controller: contactController,
+                        decoration: InputDecoration(
+                          label: labelWithAsterisk("Contact Number"),
+                          hintText: "Contact Number",
+                          border: const OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please fill this field.";
+                          }
+                          if (value.trim().length != 10) {
+                            return "Number Not Valid.";
+                          }
+                          return null;
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                      ),
+                    ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please fill this field.";
-                    }
-                    return null;
-                  },
-                ),
+                ],
               ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -159,9 +207,10 @@ class _FormSreenState extends State<FormSreen> {
                     border: OutlineInputBorder(),
                   ),
                   value: selectedGender,
-                  items: ['Male', 'Female', 'Other']
+
+                  items: ['<Select Gender>', 'Male', 'Female', 'Other']
                       .map((gender) => DropdownMenuItem<String>(
-                            value: gender,
+                            value: gender == '<Select Gender>' ? null : gender,
                             child: Text(gender),
                           ))
                       .toList(),
@@ -181,6 +230,16 @@ class _FormSreenState extends State<FormSreen> {
                     hintText: "Email Id",
                     border: OutlineInputBorder(),
                   ),
+
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return null;
+                    } else if (!validEmail()) {
+                      return "Email Not Valid.(You can comtinue without email)";
+                    }
+                    return null;
+                  },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
               Padding(
@@ -197,9 +256,10 @@ class _FormSreenState extends State<FormSreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _showRegisterDialog();
+                      } else if (!validEmail()) {
+                        showSnackBar(context, "Invalid Email Address.");
                       } else {
-                        _showSnackBar(
-                            context, "Please Enter Mandatory Fields.");
+                        showSnackBar(context, "Please Enter Mandatory Fields.");
                       }
                     },
                     child: const Text(
@@ -228,7 +288,12 @@ class _FormSreenState extends State<FormSreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const RegisteredStudentScreen()));
+
+                                  const RegisteredStudentScreen())).then(
+                        (onValue) {
+                         _loadStudentList();
+                        },
+                      );
                     },
                     child: const Text(
                       "Show Registered Students",
@@ -285,16 +350,19 @@ class _FormSreenState extends State<FormSreen> {
                         .add(Student(namecontroller.text, selectedCourse!));
                     saveStudentList(studentList!);
                   });
-                  _showSnackBar(context, "Registration Successful.");
-                  namecontroller.clear();
-                  selectedCourse = null;
-                  contactController.clear();
-                  addressController.clear();
-                  selectedGender = null;
-                  dobController.clear();
-                  emailController.clear();
-                } else {
-                  _showSnackBar(context, "Please Enter Mandatory Fields.");
+
+                  showSnackBar(context, "Registration Successful.");
+
+                  _formKey.currentState?.reset();
+                  setState(() {
+                    namecontroller.clear();
+                    selectedCourse = null;
+                    selectedGender = null;
+                    addressController.clear();
+                    dobController.clear();
+                    emailController.clear();
+                    contactController.clear();
+                  });
                 }
               },
               child: const Text("Yes"),
@@ -310,15 +378,6 @@ class _FormSreenState extends State<FormSreen> {
       return "Please fill this field.";
     }
     return null;
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    final snackBar = SnackBar(
-      content: Text(message),
-      duration: const Duration(seconds: 2),
-      backgroundColor: Colors.black87,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Widget labelWithAsterisk(String label) {
